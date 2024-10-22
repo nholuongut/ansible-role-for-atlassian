@@ -1,0 +1,26 @@
+---
+- name: Add HipChat Repository Key
+  become: yes
+  apt_key:
+      url: "https://atlassian.artifactoryonline.com/atlassian/api/gpg/key/public"
+      state: present
+  when: atlassian_hipchat_install and (ansible_distribution == "Ubuntu")
+
+- name: Add HipChat Repository
+  become: yes
+  apt_repository:
+      repo: "deb https://atlassian.artifactoryonline.com/atlassian/hipchat-apt-client {{ansible_distribution_release}} main"
+      update_cache: yes
+      state: present
+  when: atlassian_hipchat_install and (ansible_distribution == "Ubuntu")
+
+- name: Install HipChat Package
+  become: yes
+  package:
+      name: "{{item}}"
+      state: present
+      allow_unauthenticated: no
+  with_items:
+  - "hipchat4"
+  when: atlassian_hipchat_install and (ansible_distribution == "Ubuntu")
+
